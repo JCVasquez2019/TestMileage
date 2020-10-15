@@ -1,0 +1,39 @@
+﻿@page "/mileage"
+@inject HttpClient Http
+
+<h1>Mileage</h1>
+
+<p>
+    Postal code origin : <input @bind="PostalCodeOrigin" />
+</p>
+
+<p>
+    Postal code destination :<input @bind="PostalCodeDestination" />
+</p>
+
+<button class="btn btn-primary" @onclick="GetDistance">Get Distance</button>
+
+<p1>
+    Distance : @Result
+</p1>
+
+@code {
+    public string PostalCodeOrigin { get; set; }
+    public string PostalCodeDestination { get; set; }
+    public string Result { get; set; }
+    private async Task GetDistance()
+    {
+        string url = string.Format(@"http://localhost:52412/api/Mileage/GetDistance?postalCodeOrigin={0}&postalCodeDestination={1}", PostalCodeOrigin, PostalCodeDestination);
+        HttpResponseMessage response = await Http.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
+            throw new Exception();
+        else
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Result = content;
+        }
+    }
+
+
+}
+
